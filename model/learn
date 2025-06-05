@@ -1,0 +1,31 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+import joblib
+
+# 1. 학습용 CSV 데이터 로드
+df = pd.read_csv("train_data.csv")
+
+# 2. 전처리 (간단한 정제)
+df = df.dropna()
+X = df["comment"]
+y = df["label"]
+
+# 3. 벡터라이저 적용
+vectorizer = TfidfVectorizer(max_features=5000)
+X_vect = vectorizer.fit_transform(X)
+
+# 4. 모델 학습
+X_train, X_test, y_train, y_test = train_test_split(X_vect, y, test_size=0.2, random_state=42)
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# 5. 성능 평가
+y_pred = model.predict(X_test)
+print(classification_report(y_test, y_pred))
+
+# 6. 모델 저장
+joblib.dump(model, "model/sentiment_model.pkl")
+joblib.dump(vectorizer, "model/vectorizer.pkl")
