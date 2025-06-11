@@ -48,16 +48,37 @@ def get_comments(video_id):
         comments.append(comment)
     return comments
 
-# 좋아요/싫어요 비율 시각화 함수
-def get_video_stats(video_id):
+#좋아요 많이 받은 댓글 구하는 함수
+def get_top_liked_comments(video_id, max_results=100):
+    comments = []
+    response = youtube.commentThreads().list(
+        part="snippet",
+        videoId=video_id,
+        maxResults=max_results,
+        textFormat="plainText"
+    ).execute()
+
+    for item in response["items"]:
+        snippet = item["snippet"]["topLevelComment"]["snippet"]
+        comments.append({
+            "comment": snippet["textDisplay"],
+            "likeCount": snippet.get("likeCount", 0)
+        })
+
+    # 좋아요 기준 정렬
+    df_comments = pd.DataFrame(comments)
+    df_sorted = df_comments.sort_values(by="likeCount", ascending=False).head(10)
+    return df_sorted
+
+# 영상 좋아요 개수 구하는 함수
+def get_video_likes(video_id):
     response = youtube.videos().list(
         part='statistics',
         id=video_id
     ).execute()
     stats = response['items'][0]['statistics']
     like = int(stats.get('likeCount', 0))
-    dislike = 0  # YouTube API는 dislike를 제공하지 않음 (정책 변경)
-    return like, dislike
+    return like
 
 # 감정 분석 함수 (모델 사용)
 def predict_sentiment(comments):
@@ -92,9 +113,17 @@ if url:
         like, dislike = get_video_stats(video_id)
 
         # 좋아요 시각화
-        st.subheader("👍 좋아요 수 시각화")
-        fig = px.pie(names=["좋아요", "싫어요(추정치)"], values=[like, 1], hole=0.4)
-        st.plotly_chart(fig)
+        st.subheader("👍 좋아요 수")
+        st.metric("좋아요 수", f"{like:,}개")
+
+        #좋아요 가장 많이 받은 댓글 10개 표시
+        st.subheader("🔥 좋아요 많은 댓글 TOP 10")
+        top_comments = get_top_liked_comments(video_id)
+
+        if not top_comments.empty:
+            st.table(top_comments)
+        else:
+            st.info("댓글을 불러올 수 없습니다.")
 
         # 감정 분석
         sentiments = predict_sentiment(comments)
