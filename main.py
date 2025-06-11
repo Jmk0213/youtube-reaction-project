@@ -110,7 +110,7 @@ if url:
     video_id = extract_video_id(url)
     if video_id:
         comments = get_comments(video_id)
-        like, dislike = get_video_stats(video_id)
+        like = get_video_stats(video_id)
 
         # 좋아요 시각화
         st.subheader("👍 좋아요 수")
