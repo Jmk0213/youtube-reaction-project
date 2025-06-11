@@ -133,7 +133,7 @@ if url:
         #negative_comments = [c for c, s in zip(comments, sentiments) if s == 'negative']
 
         create_wordcloud(positive_comments, "😊 긍정 댓글 워드클라우드")
-        create_wordcloud(negative_comments, "😠 부정 댓글 워드클라우드")
+        #create_wordcloud(negative_comments, "😠 부정 댓글 워드클라우드")
 
         # 전체 워드클라우드
         create_wordcloud(comments, "💬 전체 댓글 워드클라우드")
