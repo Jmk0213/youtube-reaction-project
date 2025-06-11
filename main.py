@@ -132,8 +132,13 @@ if url:
         positive_comments = [c for c, s in zip(comments, sentiments) if s == 'positive']
         negative_comments = [c for c, s in zip(comments, sentiments) if s == 'negative']
 
-        create_wordcloud(positive_comments, "😊 긍정 댓글 워드클라우드")
-        create_wordcloud(negative_comments, "😠 부정 댓글 워드클라우드")
+        col1, col2 = st.columns(2)
+
+        with col1:
+            create_wordcloud(positive_comments, "😊 긍정 댓글 워드클라우드")
+
+        with col2:
+            create_wordcloud(negative_comments, "😠 부정 댓글 워드클라우드")
 
         # 전체 워드클라우드
         create_wordcloud(comments, "💬 전체 댓글 워드클라우드")
