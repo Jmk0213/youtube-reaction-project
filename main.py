@@ -20,7 +20,7 @@ API_KEY = "AIzaSyBKxUeZ41w7jBpj9GzKv0emNM7_4-V1e4Q"
 youtube = build('youtube', 'v3', developerKey=API_KEY)
 
 st.set_page_config(page_title="YouTube 댓글 감정 분석", layout="wide")
-st.title("🎥 YouTube 댓글 감정 분석기")
+st.title("🎥 YouTube 영상 반응 분석기")
 
 # 유튜브 링크 입력
 url = st.text_input("YouTube 영상 링크를 입력하세요")
